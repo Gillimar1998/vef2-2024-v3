@@ -1,11 +1,24 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { getTeams, Team } from '../lib/teams.js';
+import {Team } from '../lib/teams.js';
+import { getTeams, getTeamsBySlug } from '../lib/db.js';
 export const teamsRouter = express.Router();
 
 export async function GetTeams(req: Request, res: Response) {
-    const teams = getTeams()
+    const teams = await getTeams()
 
     return res.json(teams);
+}
+
+export async function GetTeam(req: Request, res: Response, next:NextFunction) {
+  const { slug } = req.params;
+
+  const team = await getTeamsBySlug(slug);
+
+  if(!team){
+    return next();
+  }
+
+  return res.json(team);
 }
 
 export async function createTeamHandler(req: Request, res:Response, next:NextFunction) {
@@ -31,12 +44,6 @@ export async function PostTeams(req: Request, res: Response) {
     const teams = getTeams()
 
     return res.json(teams);
-}
-
-export async function GetTeam(req: Request, res: Response) {
-  const teams = getTeams()
-
-  return res.json(teams);
 }
 
 export async function UpdateTeam(req: Request, res: Response) {

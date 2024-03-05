@@ -1,5 +1,5 @@
 INSERT INTO teams VALUES (1, 'Boltaliðið' , 'boltalidid', 'Elska bolta');
-INSERT INTO teams VALUES (2, 'Dripplararnir', 'dripplararnir', 'drippla alltaf'),
+INSERT INTO teams VALUES (2, 'Dripplararnir', 'dripplararnir', 'drippla alltaf');
 INSERT INTO teams VALUES (3, 'Skotföstu kempurnar', 'skotfostu-kempurnar', 'geta neglt boltanum lengst');
 INSERT INTO teams VALUES (4, 'Markaskorarnir', 'markaskorarnir', 'skora endalaust');
 INSERT INTO teams VALUES (5, 'Sigurliðið', 'sigurlidid', 'vinna alltaf');

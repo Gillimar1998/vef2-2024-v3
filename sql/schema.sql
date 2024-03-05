@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS public.teams (
   id serial primary key,
-  name varchar(128) not null unique
-  slug varchar(128) not null unique
-  description varchar(1024)
+  name varchar(128) not null unique,
+  slug varchar(128) not null unique,
+  description TEXT DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS public.games (

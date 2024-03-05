@@ -1,5 +1,6 @@
 import pg from 'pg';
 import { Team, Game } from './teams.js';
+import { teamMapper, teamsMapper } from './mapper.js';
 
 let savedPool: pg.Pool | undefined;
 
@@ -50,7 +51,7 @@ export async function query(
     client.release();
   }
 }
-
+/*
 export async function conditionalUpdate(
   table: 'department' | 'course',
   id: number,
@@ -88,31 +89,30 @@ export async function conditionalUpdate(
 
   return result;
 }
-
+*/
 export async function poolEnd() {
   const pool = getPool();
   await pool.end();
 }
-/*
-export async function getDepartments(): Promise<Array<Department> | null> {
-  const result = await query('SELECT * FROM department');
+
+export async function getTeams(): Promise<Array<Team> | null> {
+  const result = await query('SELECT * FROM teams');
 
   if (!result) {
     return null;
   }
 
-  const departments = departmentsMapper(result.rows).map((d) => {
-    delete d.courses;
+  const teams = teamsMapper(result.rows).map((d) => {
     return d;
   });
 
-  return departments;
+  return teams;
 }
 
-export async function getDepartmentBySlug(
+export async function getTeamsBySlug(
   slug: string,
-): Promise<Department | null> {
-  const result = await query('SELECT * FROM department WHERE slug = $1', [
+): Promise<Team | null> {
+  const result = await query('SELECT * FROM teams WHERE slug = $1', [
     slug,
   ]);
 
@@ -120,11 +120,11 @@ export async function getDepartmentBySlug(
     return null;
   }
 
-  const department = departmentMapper(result.rows[0]);
+  const team = teamMapper(result.rows[0]);
 
-  return department;
+  return team;
 }
-
+/*
 export async function deleteDepartmentBySlug(slug: string): Promise<boolean> {
   const result = await query('DELETE FROM department WHERE slug = $1', [slug]);
 
