@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import {Team } from '../lib/teams.js';
-import { getTeams, getTeamsBySlug } from '../lib/db.js';
+import { getTeams, getTeamsBySlug, insertTeam } from '../lib/db.js';
+import slugify from 'slugify';
+import { genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation.js';
 export const teamsRouter = express.Router();
 
 export async function GetTeams(req: Request, res: Response) {
@@ -27,18 +29,34 @@ export async function createTeamHandler(req: Request, res:Response, next:NextFun
 
   const teamToCreate: Omit<Team ,'id'> = {
     name,
-    slug: 'slugify(title)',
-    description,
+    slug: slugify(name, { lower: true }),
+    description
   }
-  /* const createdTeam = await insertTeam(teamToCreate, false);
+  const createdTeam = await insertTeam(teamToCreate, false);
   
   if (!createdTeam){
     return next(new Error('unable to create team'));
   }
 
   return res.status(201).json(createdTeam);
-  */
 }
+export const createTeam = [
+  stringValidator({ 
+    field: 'name', 
+    maxLength: 128 }),
+  stringValidator({
+    field: 'description',
+    valueRequired: false,
+    maxLength: 1024,
+  }),
+  teamDoesNotExistValidator,
+  xssSanitizer('name'),
+  xssSanitizer('description'),
+  validationCheck,
+  genericSanitizer('name'),
+  genericSanitizer('description'),
+  createTeamHandler,
+];
 
 export async function PostTeams(req: Request, res: Response) {
     const teams = getTeams()
@@ -61,7 +79,7 @@ export async function DeleteTeam(req: Request, res: Response) {
 
 
 teamsRouter.get('/', GetTeams);
-teamsRouter.post('/', PostTeams);
+teamsRouter.post('/', createTeam);
 teamsRouter.get('/:slug', GetTeam);
 teamsRouter.patch('/:slug', UpdateTeam);
 teamsRouter.delete('/:slug', DeleteTeam);

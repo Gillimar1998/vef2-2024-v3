@@ -1,15 +1,15 @@
-INSERT INTO teams VALUES (1, 'Boltaliðið' , 'boltalidid', 'Elska bolta');
-INSERT INTO teams VALUES (2, 'Dripplararnir', 'dripplararnir', 'drippla alltaf');
-INSERT INTO teams VALUES (3, 'Skotföstu kempurnar', 'skotfostu-kempurnar', 'geta neglt boltanum lengst');
-INSERT INTO teams VALUES (4, 'Markaskorarnir', 'markaskorarnir', 'skora endalaust');
-INSERT INTO teams VALUES (5, 'Sigurliðið', 'sigurlidid', 'vinna alltaf');
-INSERT INTO teams VALUES (6, 'Risaeðlurnar', 'risaedlurnar', 'er svakalegir');
-INSERT INTO teams VALUES (7, 'Framherjarnir', 'framherjarnir', 'verjast aldrei');
-INSERT INTO teams VALUES (8, 'Fljótu fæturnir', 'fljotu-faeturnir', 'FAST!');
-INSERT INTO teams VALUES (9, 'Vinningshópurinn', 'viningshopurinn', 'WINNERS');
-INSERT INTO teams VALUES (10, 'Ósigrandi skotfólkið', 'osigrandi-skotfolkid', 'NOT A LOSERS');
-INSERT INTO teams VALUES (11, 'Óhemjurnar', 'ohemjurnar', 'SVAKALEGAR');
-INSERT INTO teams VALUES (12, 'Hraðaliðið', 'hradalidid', 'FASTER THEN FAST!');
+INSERT INTO teams (name, slug, description) VALUES ('Boltaliðið' , 'boltalidid', 'Elska bolta');
+INSERT INTO teams (name, slug, description) VALUES ('Dripplararnir', 'dripplararnir', 'drippla alltaf');
+INSERT INTO teams (name, slug, description) VALUES ('Skotföstu kempurnar', 'skotfostu-kempurnar', 'geta neglt boltanum lengst');
+INSERT INTO teams (name, slug, description) VALUES ('Markaskorarnir', 'markaskorarnir', 'skora endalaust');
+INSERT INTO teams (name, slug, description) VALUES ('Sigurliðið', 'sigurlidid', 'vinna alltaf');
+INSERT INTO teams (name, slug, description) VALUES ('Risaeðlurnar', 'risaedlurnar', 'er svakalegir');
+INSERT INTO teams (name, slug, description) VALUES ('Framherjarnir', 'framherjarnir', 'verjast aldrei');
+INSERT INTO teams (name, slug, description) VALUES ('Fljótu fæturnir', 'fljotu-faeturnir', 'FAST!');
+INSERT INTO teams (name, slug, description) VALUES ('Vinningshópurinn', 'viningshopurinn', 'WINNERS');
+INSERT INTO teams (name, slug, description) VALUES ('Ósigrandi skotfólkið', 'osigrandi-skotfolkid', 'NOT A LOSERS');
+INSERT INTO teams (name, slug, description) VALUES ('Óhemjurnar', 'ohemjurnar', 'SVAKALEGAR');
+INSERT INTO teams (name, slug, description) VALUES ('Hraðaliðið', 'hradalidid', 'FASTER THEN FAST!');
 
 INSERT INTO games (date, home, away, home_score, away_score) VALUES ('2024-01-22T15:20:53.955Z', 3, 12, 5, 4);
 INSERT INTO games (date, home, away, home_score, away_score) VALUES ('2024-01-22T15:20:53.955Z', 8, 7, 1, 0);

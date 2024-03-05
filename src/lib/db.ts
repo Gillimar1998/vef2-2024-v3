@@ -124,6 +124,22 @@ export async function getTeamsBySlug(
 
   return team;
 }
+
+export async function insertTeam(
+  Team: Omit<Team, 'id'>,
+  silent = false,
+): Promise<Team | null> {
+  const { name, slug, description } = Team;
+  const result = await query(
+    'INSERT INTO teams (name, slug, description) VALUES ($1, $2, $3) RETURNING id, name, slug, description',
+    [name, slug, description],
+    silent,
+  );
+
+  const mapped = teamMapper(result?.rows[0]);
+
+  return mapped;
+}
 /*
 export async function deleteDepartmentBySlug(slug: string): Promise<boolean> {
   const result = await query('DELETE FROM department WHERE slug = $1', [slug]);
@@ -133,22 +149,6 @@ export async function deleteDepartmentBySlug(slug: string): Promise<boolean> {
   }
 
   return result.rowCount === 1;
-}
-
-export async function insertDepartment(
-  department: Omit<Department, 'id'>,
-  silent = false,
-): Promise<Department | null> {
-  const { title, slug, description } = department;
-  const result = await query(
-    'INSERT INTO department (title, slug, description) VALUES ($1, $2, $3) RETURNING id, title, slug, description, created, updated',
-    [title, slug, description],
-    silent,
-  );
-
-  const mapped = departmentMapper(result?.rows[0]);
-
-  return mapped;
 }
 
 export async function insertCourse(
