@@ -1,10 +1,10 @@
-type Team ={
+export type Team ={
     name: string;
     slug: string;
     description?: string;
 }
 
-type Game = {
+export type Game = {
     date: Date;
     home: Team;
     away: Team;
