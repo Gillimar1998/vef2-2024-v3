@@ -118,8 +118,8 @@ export async function updateGameHandler(req: Request, res:Response, next:NextFun
     const{date, home, away, home_score, away_score} = req.body
     
 
-    const newHome = home || game.home;
-    const newAway = away || game.away;
+    const newHome = home !== undefined ? home : game.home.id;
+    const newAway = away !== undefined ? away : game.away.id;
 
     if(newHome === newAway){
         return res.status(400).json({ message: "Heima og útilið mega ekki vera það sama" });
@@ -171,3 +171,4 @@ gamesRouter.get('/', GetGames);
 gamesRouter.post('/', createGame)
 gamesRouter.get('/:id', GetGame);
 gamesRouter.patch('/:id', updateGame);
+gamesRouter.delete('/:id', )

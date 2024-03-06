@@ -136,7 +136,6 @@ export const dateValidator = ({
       if(input > now){
           throw new Error('Ekki hægt að skrá leiki fram í tíman')
       }else{
-          console.log('date checked')
           return true;
       }
   })
@@ -149,17 +148,14 @@ export const dateValidator = ({
       if(input< twoMonths){
         throw new Error('Ekki hægt að skrá leiki eldri en tveggja mánaða')
       }else{
-        console.log('date checked2')
         return true;
       }
 
     }
   )
   if (optional) {
-    console.log(`Field ${field} is optional.`);
     return val.optional();
   }
-  console.log('date for i gegn')
   return val;
 }
 
@@ -171,13 +167,12 @@ export const scoreValidator = ({
 }= {}) => {
   const val = body(field)
   .notEmpty()
-  .withMessage('Lið mega ekki vanta stig!')
+  .withMessage('Lið mega ekki vanta stig!' + field)
   .bail()
   .isInt({min: 0, max: 99})
   .withMessage('Stig liðs verða að vera heiltala frá 0 til 99 ' + field)
 
   if (optional) {
-    console.log(`Field ${field} is optional.`);
     return val.optional();
   }
   return val;
@@ -189,18 +184,19 @@ export const idValidator = ({
   maxLength = 0,
   optional = false,
 }= {}) => {
-  console.log('lid check ' + field)
   const val = body(field)
   .notEmpty()
   .withMessage('Lið má ekki vanta ' + field )
   .bail()
+  .isInt()
+  .withMessage('ID þarf að vera tala ' + field)
+  .bail()
   .custom(async (value) => {
-    console.log('lid checking' + value)
     const id = parseInt(value, 10);
-    console.log('id log fyrir value ' + id)
     if (isNaN(id)) {
-      throw new Error('ID þarf að vera tala liðs');
+      throw new Error('ID þarf að vera tala ' + field);
     }
+
     const teamExists = await checkTeamExists(value);
       if (!teamExists) {
         throw new Error(field + ' er ekki skráð ID fyrir lið');
@@ -208,10 +204,8 @@ export const idValidator = ({
       return true;
   })
   if (optional) {
-    console.log(`Field ${field} is optional.`);
     return val.optional();
   }
-  console.log('lid checked ' + field)
   return val;
 }
 

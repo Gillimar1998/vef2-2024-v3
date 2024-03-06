@@ -85,16 +85,12 @@ export const updateTeam = [
 ];
 
 export async function updateTeamHandler(req: Request, res:Response, next:NextFunction) {
-  console.log('teamhandler');
 
   const {slug} = req.params;
-  console.log('slug', slug);
-
+  
   const team = await getTeamsBySlug(slug);
-  console.log('team', team);
   
   if (!team){
-    console.log('team not found exiting');
     return next();
   }
 
@@ -107,14 +103,12 @@ export async function updateTeamHandler(req: Request, res:Response, next:NextFun
     typeof name === 'string' && name ? 'slug' : null,
     typeof description === 'string' && description ? 'description' : null,
   ];
-  console.log('fields', fields);
 
   const values = [
     typeof name === 'string' && name ? name : null,
     typeof name === 'string' && name ? slugify(name).toLowerCase() : null,
     typeof description === 'string' && description ? description : null,
   ];
-  console.log('value', values);
 
   const updated = await conditionalUpdate(
     'teams',
@@ -123,7 +117,6 @@ export async function updateTeamHandler(req: Request, res:Response, next:NextFun
     values,
   );
 
-  console.log('updated', updated);
   if(!updated){
     return next(new Error('unable to update team'))
   }
