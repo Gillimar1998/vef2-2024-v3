@@ -1,6 +1,6 @@
 import pg from 'pg';
 import { Team, Game } from './teams.js';
-import { teamMapper, teamsMapper } from './mapper.js';
+import { gamesMapper, teamMapper, teamsMapper } from './mapper.js';
 
 let savedPool: pg.Pool | undefined;
 
@@ -51,9 +51,9 @@ export async function query(
     client.release();
   }
 }
-/*
+
 export async function conditionalUpdate(
-  table: 'department' | 'course',
+  table: 'teams' | 'games',
   id: number,
   fields: Array<string | null>,
   values: Array<string | number | null>,
@@ -89,7 +89,7 @@ export async function conditionalUpdate(
 
   return result;
 }
-*/
+
 export async function poolEnd() {
   const pool = getPool();
   await pool.end();
@@ -107,6 +107,19 @@ export async function getTeams(): Promise<Array<Team> | null> {
   });
 
   return teams;
+}
+export async function getGames(): Promise<Array<Game> | null> {
+  const result = await query('SELECT * FROM games');
+
+  if (!result) {
+    return null;
+  }
+
+  const games = gamesMapper(result.rows).map((d) => {
+    return d;
+  });
+
+  return games;
 }
 
 export async function getTeamsBySlug(
@@ -140,9 +153,9 @@ export async function insertTeam(
 
   return mapped;
 }
-/*
-export async function deleteDepartmentBySlug(slug: string): Promise<boolean> {
-  const result = await query('DELETE FROM department WHERE slug = $1', [slug]);
+
+export async function deleteTeamBySlug(slug: string): Promise<boolean> {
+  const result = await query('DELETE FROM teams WHERE slug = $1', [slug]);
 
   if (!result) {
     return false;
@@ -150,78 +163,3 @@ export async function deleteDepartmentBySlug(slug: string): Promise<boolean> {
 
   return result.rowCount === 1;
 }
-
-export async function insertCourse(
-  course: Omit<Course, 'id'>,
-  departmentId: number,
-  silent = false,
-): Promise<Course | null> {
-  const { title, units, semester, level, url, courseId } = course;
-  const result = await query(
-    'INSERT INTO course (title, units, semester, level, url, department_id, course_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-    [title, units, semester, level, url, departmentId, courseId],
-    silent,
-  );
-
-  const mapped = courseMapper(result?.rows[0]);
-
-  return mapped;
-}
-
-export async function getCoursesByDepartmentId(
-  id: number,
-): Promise<Array<Course>> {
-  const result = await query(`SELECT * FROM course WHERE department_id = $1`, [
-    id,
-  ]);
-
-  if (!result) {
-    return [];
-  }
-
-  const courses = coursesMapper(result.rows);
-
-  return courses;
-}
-
-export async function getCourseByTitle(title: string): Promise<Course | null> {
-  const result = await query(`SELECT * FROM course WHERE title = $1`, [title]);
-
-  if (!result) {
-    return null;
-  }
-
-  const course = courseMapper(result.rows[0]);
-  console.log('title, course :>> ', result.rows[0], title, course);
-  return course;
-}
-
-export async function getCourseByCourseId(
-  courseId: string,
-): Promise<Course | null> {
-  const result = await query(`SELECT * FROM course WHERE course_id = $1`, [
-    courseId,
-  ]);
-
-  if (!result) {
-    return null;
-  }
-
-  const course = courseMapper(result.rows[0]);
-
-  return course;
-}
-
-export async function deleteCourseByCourseId(
-  courseId: string,
-): Promise<boolean> {
-  const result = await query('DELETE FROM course WHERE course_id = $1', [
-    courseId,
-  ]);
-
-  if (!result) {
-    return false;
-  }
-
-  return result.rowCount === 1;
-}*/

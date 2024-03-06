@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { teamsRouter } from './teams-router.js';
+import { gamesRouter } from './games-router.js';
 export const apiRouter = express.Router();
 
 
@@ -13,6 +14,14 @@ export async function indexRoute(req: Request, res: Response) {
           href: '/teams/:slug',
           methods: ['GET', 'PATCH', 'DELETE'],
         },
+        {
+          href: '/games',
+          methods: ['GET', 'POST'],
+        },
+        {
+          href: '/games/:slug',
+          methods: ['GET', 'PATCH', 'DELETE'],
+        },
       ];
 
     return res.json(data);
@@ -21,3 +30,4 @@ export async function indexRoute(req: Request, res: Response) {
 
 apiRouter.get('/', indexRoute);
 apiRouter.use('/teams', teamsRouter);
+apiRouter.use('/games', gamesRouter);

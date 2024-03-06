@@ -38,8 +38,10 @@ export function validationCheck(
 }
 
 export function atLeastOneBodyValueValidator(fields: Array<string>) {
+    console.log('running atleastonebody');
   return body().custom(async (value, { req }) => {
     const { body: reqBody } = req;
+    console.log('body', reqBody);
 
     let valid = false;
 
@@ -78,6 +80,9 @@ export const stringValidator = ({
   maxLength = 0,
   optional = false,
 } = {}) => {
+  console.log('running stringval for field', field);
+
+  console.log(`Config for ${field}:`, { valueRequired, maxLength, optional });
   const val = body(field)
     .trim()
     .isString()
@@ -96,6 +101,7 @@ export const stringValidator = ({
     );
 
   if (optional) {
+    console.log(`Field ${field} is optional.`);
     return val.optional();
   }
   return val;

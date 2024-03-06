@@ -1,8 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import {Team } from '../lib/teams.js';
-import { getTeams, getTeamsBySlug, insertTeam } from '../lib/db.js';
+import { conditionalUpdate, deleteTeamBySlug, getTeams, getTeamsBySlug, insertTeam } from '../lib/db.js';
 import slugify from 'slugify';
-import { genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation.js';
+import { atLeastOneBodyValueValidator, genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation.js';
+import { teamMapper } from '../lib/mapper.js';
+
 export const teamsRouter = express.Router();
 
 export async function GetTeams(req: Request, res: Response) {
@@ -40,6 +42,7 @@ export async function createTeamHandler(req: Request, res:Response, next:NextFun
 
   return res.status(201).json(createdTeam);
 }
+
 export const createTeam = [
   stringValidator({ 
     field: 'name', 
@@ -58,22 +61,88 @@ export const createTeam = [
   createTeamHandler,
 ];
 
-export async function PostTeams(req: Request, res: Response) {
-    const teams = getTeams()
+export const updateTeam = [
+  stringValidator({ 
+    field: 'name', 
+    maxLength: 128,
+   optional: true 
+  }),
+  stringValidator({
+    field: 'description',
+    valueRequired: false,
+    maxLength: 1024,
+    optional: true 
+  }),
+  atLeastOneBodyValueValidator(['name', 'description']),
+  xssSanitizer('name'),
+  xssSanitizer('description'),
+  validationCheck,
+  updateTeamHandler,
+];
 
-    return res.json(teams);
+export async function updateTeamHandler(req: Request, res:Response, next:NextFunction) {
+  console.log('teamhandler');
+
+  const {slug} = req.params;
+  console.log('slug', slug);
+
+  const team = await getTeamsBySlug(slug);
+  console.log('team', team);
+  
+  if (!team){
+    console.log('team not found exiting');
+    return next();
+  }
+
+  const {name, description} = req.body;
+
+  console.log('name', name, 'desc', description);
+
+  const fields = [
+    typeof name === 'string' && name ? 'name' : null,
+    typeof name === 'string' && name ? 'slug' : null,
+    typeof description === 'string' && description ? 'description' : null,
+  ];
+  console.log('fields', fields);
+
+  const values = [
+    typeof name === 'string' && name ? name : null,
+    typeof name === 'string' && name ? slugify(name).toLowerCase() : null,
+    typeof description === 'string' && description ? description : null,
+  ];
+  console.log('value', values);
+
+  const updated = await conditionalUpdate(
+    'teams',
+    team.id,
+    fields,
+    values,
+  );
+
+  console.log('updated', updated);
+  if(!updated){
+    return next(new Error('unable to update team'))
+  }
+
+  const updatedTeam = teamMapper(updated.rows[0])
+  return res.status(200).json(updatedTeam);
 }
 
-export async function UpdateTeam(req: Request, res: Response) {
-  const teams = getTeams()
+export async function DeleteTeam(req: Request, res: Response, next: NextFunction) {
+  const { slug } = req.params;
+  const team = await getTeamsBySlug(slug);
 
-  return res.json(teams);
-}
+  if(!team){
+    return next();
+  }
 
-export async function DeleteTeam(req: Request, res: Response) {
-  const teams = getTeams()
+  const result = await deleteTeamBySlug(slug);
 
-  return res.json(teams);
+  if(!result){
+    return next(new Error('unable to delete team'));
+  }
+
+  return res.status(204).json({});
 }
 
 
@@ -81,5 +150,5 @@ export async function DeleteTeam(req: Request, res: Response) {
 teamsRouter.get('/', GetTeams);
 teamsRouter.post('/', createTeam);
 teamsRouter.get('/:slug', GetTeam);
-teamsRouter.patch('/:slug', UpdateTeam);
+teamsRouter.patch('/:slug', updateTeam);
 teamsRouter.delete('/:slug', DeleteTeam);
