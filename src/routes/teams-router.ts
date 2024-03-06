@@ -1,11 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
-import {Team } from '../lib/teams.js';
+import { Request, Response, NextFunction } from 'express';
+import {Team } from '../lib/types.js';
 import { conditionalUpdate, deleteTeamBySlug, getTeams, getTeamsBySlug, insertTeam } from '../lib/db.js';
 import slugify from 'slugify';
 import { atLeastOneBodyValueValidator, genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation.js';
 import { teamMapper } from '../lib/mapper.js';
 
-export const teamsRouter = express.Router();
+
 
 export async function GetTeams(req: Request, res: Response, next:NextFunction) {
     const teams = await getTeams()
@@ -23,7 +23,7 @@ export async function GetTeam(req: Request, res: Response, next:NextFunction) {
   const team = await getTeamsBySlug(slug);
 
   if(!team){
-    return next();
+    return res.status(404).json({ message: "Lið fannst ekki" });
   }
 
   return res.json(team);
@@ -50,6 +50,7 @@ export async function createTeamHandler(req: Request, res:Response, next:NextFun
 export const createTeam = [
   stringValidator({ 
     field: 'name', 
+    minLenght: 3,
     maxLength: 128 }),
   stringValidator({
     field: 'description',
@@ -144,8 +145,4 @@ export async function DeleteTeam(req: Request, res: Response, next: NextFunction
 
 
 
-teamsRouter.get('/', GetTeams);
-teamsRouter.post('/', createTeam);
-teamsRouter.get('/:slug', GetTeam);
-teamsRouter.patch('/:slug', updateTeam);
-teamsRouter.delete('/:slug', DeleteTeam);
+

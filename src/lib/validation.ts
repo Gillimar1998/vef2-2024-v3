@@ -4,7 +4,6 @@ import slugify from 'slugify';
 import xss from 'xss';
 
 import { checkTeamExists, getTeams, getTeamsBySlug } from './db.js';
-import { NotSameTeamOptions } from './teams.js';
 
 /**
  * Checks to see if there are validation errors or returns next middlware if not.
@@ -80,23 +79,22 @@ export const genericSanitizerMany = (params: string[]) =>
 export const stringValidator = ({
   field = '',
   valueRequired = true,
+  minLenght = 0,
   maxLength = 0,
   optional = false,
 } = {}) => {
-  console.log('running stringval for field', field);
-
-  console.log(`Config for ${field}:`, { valueRequired, maxLength, optional });
   const val = body(field)
     .trim()
     .isString()
     .isLength({
-      min: valueRequired ? 1 : undefined,
+      min: minLenght ? minLenght : undefined,
       max: maxLength ? maxLength : undefined,
     })
     .withMessage(
       [
         field,
         valueRequired ? 'required' : '',
+        minLenght ? `min ${minLenght}` : '',
         maxLength ? `max ${maxLength} characters` : '',
       ]
         .filter((i) => Boolean(i))
@@ -214,6 +212,6 @@ export function notSameTeamValidator(field1: string, field2: string, message: st
       if (value === req.body[field2]) {
           throw new Error(message);
       }
-      return true; // Validation passed
+      return true;
   });
 }

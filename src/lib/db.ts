@@ -1,5 +1,5 @@
 import pg from 'pg';
-import { Team, Game, GameQuery } from './teams.js';
+import { Team, Game, GameQuery } from './types.js';
 import { gameMapper, gamesMapper, teamMapper, teamsMapper } from './mapper.js';
 
 let savedPool: pg.Pool | undefined;
@@ -223,6 +223,16 @@ export async function insertTeam(
 
 export async function deleteTeamBySlug(slug: string): Promise<boolean> {
   const result = await query('DELETE FROM teams WHERE slug = $1', [slug]);
+
+  if (!result) {
+    return false;
+  }
+
+  return result.rowCount === 1;
+}
+
+export async function deleteGameByID(id :string):Promise<boolean> {
+  const result = await query('DELETE FROM games WHERE id = $1', [id]);
 
   if (!result) {
     return false;

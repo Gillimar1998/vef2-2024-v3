@@ -1,4 +1,4 @@
-import { Team, Game, GameQuery } from "./teams";
+import { Team, Game, GameQuery } from "./types";
 
 export function teamMapper(
     potentialTeam: unknown,

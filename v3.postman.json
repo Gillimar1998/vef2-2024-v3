@@ -1,14 +1,21 @@
-"add a Team"
-{
+{"add a Team":{
     "name": "Input",
     "description": "Optional Input"
-}
-"update a Team verður að velja annað hvort name eða desc til að updatea"
+},
+"update a Team verður að velja annað hvort name eða desc til að updatea":
 {
     "name": "Optional Input",
     "description": "Optional Input"
-}
-"add a game"
+},
+"add a game":
+{
+    "date": "2024-01-01T15:20:53.955Z",
+    "home": "input",
+    "away": "input",
+    "home_score": 5,
+    "away_score": -5
+},
+"update a game":
 {
     "date": "2024-01-01T15:20:53.955Z",
     "home": "input",
@@ -16,11 +23,4 @@
     "home_score": 5,
     "away_score": -5
 }
-"update a game"
-{
-    "date": "2024-01-01T15:20:53.955Z",
-    "home": "input",
-    "away": "input",
-    "home_score": 5,
-    "away_score": -5
 }

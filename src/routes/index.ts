@@ -1,8 +1,10 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { teamsRouter } from './teams-router.js';
-import { gamesRouter } from './games-router.js';
-export const apiRouter = express.Router();
+import express, { Request, Response, } from 'express';
+import { DeleteTeam, GetTeam, GetTeams, createTeam, updateTeam } from './teams-router.js';
+import { GetGame, GetGames, createGame, deleteGame, updateGame } from './games-router.js';
 
+export const apiRouter = express.Router();
+export const teamsRouter = express.Router();
+export const gamesRouter = express.Router();
 
 export async function indexRoute(req: Request, res: Response) {
     const data = [
@@ -31,3 +33,15 @@ export async function indexRoute(req: Request, res: Response) {
 apiRouter.get('/', indexRoute);
 apiRouter.use('/teams', teamsRouter);
 apiRouter.use('/games', gamesRouter);
+
+teamsRouter.get('/', GetTeams);
+teamsRouter.post('/', createTeam);
+teamsRouter.get('/:slug', GetTeam);
+teamsRouter.patch('/:slug', updateTeam);
+teamsRouter.delete('/:slug', DeleteTeam);
+
+gamesRouter.get('/', GetGames);
+gamesRouter.post('/', createGame)
+gamesRouter.get('/:id', GetGame);
+gamesRouter.patch('/:id', updateGame);
+gamesRouter.delete('/:id', deleteGame)

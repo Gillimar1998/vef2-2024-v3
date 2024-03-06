@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import express, { NextFunction, Request, Response, } from 'express';
-import { router, bye, hello, error } from './routes/api.js';
+import { router } from './routes/api.js';
 import { apiRouter } from './routes/index.js';
 
 dotenv.config();

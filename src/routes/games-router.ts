@@ -1,11 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
-import {GameQuery, Team } from '../lib/teams.js';
-import { conditionalUpdate, deleteTeamBySlug, getGameByID, getGames, getTeams, getTeamsBySlug, insertGame, insertTeam } from '../lib/db.js';
-import slugify from 'slugify';
-import { atLeastOneBodyValueValidator, dateValidator, genericSanitizer, idValidator, notSameTeamValidator, scoreValidator, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation.js';
-import { teamMapper } from '../lib/mapper.js';
+import { Request, Response, NextFunction } from 'express';
+import {GameQuery,  } from '../lib/types.js';
+import { conditionalUpdate, deleteGameByID,  getGameByID, getGames,  insertGame,  } from '../lib/db.js';
 
-export const gamesRouter = express.Router();
+import { atLeastOneBodyValueValidator, dateValidator, idValidator, notSameTeamValidator, scoreValidator, validationCheck, } from '../lib/validation.js';
+
+
+
 
 export async function GetGames(req: Request, res: Response, next:NextFunction) {
     const games = await getGames()
@@ -165,10 +165,19 @@ export async function updateGameHandler(req: Request, res:Response, next:NextFun
 return res.status(200).json(updatedGame);
 
 }
-
-
-gamesRouter.get('/', GetGames);
-gamesRouter.post('/', createGame)
-gamesRouter.get('/:id', GetGame);
-gamesRouter.patch('/:id', updateGame);
-gamesRouter.delete('/:id', )
+export async function deleteGame(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    const game = await getGameByID(id);
+  
+    if(!game){
+      return next();
+    }
+  
+    const result = await deleteGameByID(id);
+  
+    if(!result){
+      return next(new Error('unable to delete game'));
+    }
+  
+    return res.status(204).json({});
+  }
