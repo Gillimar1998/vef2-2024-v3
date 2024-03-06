@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express, { NextFunction, Request, Response, } from 'express';
+import express from 'express';
 import { router } from './routes/api.js';
 import { apiRouter } from './routes/index.js';
 
@@ -12,7 +12,7 @@ app.use(express.json());
 app.use('/', apiRouter);
 app.use(router);
 
-function errorHandler(err: Error, req: Request, res: Response, next: NextFunction){
+function errorHandler(err: Error){
 
   console.error('Villa!!', err);
 

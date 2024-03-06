@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { CustomValidator, ValidationChain, body, validationResult } from 'express-validator';
+import {ValidationChain, body, validationResult } from 'express-validator';
 import slugify from 'slugify';
 import xss from 'xss';
 
-import { checkTeamExists, getTeams, getTeamsBySlug } from './db.js';
+import { checkTeamExists, getTeamsBySlug } from './db.js';
 
 /**
  * Checks to see if there are validation errors or returns next middlware if not.
@@ -120,8 +120,6 @@ export const teamDoesNotExistValidator = body('name').custom(
 
 export const dateValidator = ({
   field = '',
-  valueRequired = true,
-  maxLength = 0,
   optional = false,
 }= {}) => {
   const val = body(field)
@@ -159,8 +157,6 @@ export const dateValidator = ({
 
 export const scoreValidator = ({
   field = '',
-  valueRequired = true,
-  maxLength = 0,
   optional = false,
 }= {}) => {
   const val = body(field)
@@ -178,8 +174,6 @@ export const scoreValidator = ({
 
 export const idValidator = ({
   field = '',
-  valueRequired = true,
-  maxLength = 0,
   optional = false,
 }= {}) => {
   const val = body(field)

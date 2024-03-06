@@ -17,7 +17,7 @@ export async function GetGames(req: Request, res: Response, next:NextFunction) {
     return res.json(games);
 }
 
-export async function GetGame(req: Request, res: Response, next:NextFunction) {
+export async function GetGame(req: Request, res: Response) {
     const { id } = req.params;
   
     const game = await getGameByID(id);
@@ -106,7 +106,7 @@ export const updateGame=[
     updateGameHandler,
 ]
 
-export async function updateGameHandler(req: Request, res:Response, next:NextFunction) {
+export async function updateGameHandler(req: Request, res:Response) {
     const{id} = req.params
 
     const game = await getGameByID(id);

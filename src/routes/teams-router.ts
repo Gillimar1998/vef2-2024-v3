@@ -17,7 +17,7 @@ export async function GetTeams(req: Request, res: Response, next:NextFunction) {
     return res.json(teams);
 }
 
-export async function GetTeam(req: Request, res: Response, next:NextFunction) {
+export async function GetTeam(req: Request, res: Response) {
   const { slug } = req.params;
 
   const team = await getTeamsBySlug(slug);
