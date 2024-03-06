@@ -109,7 +109,23 @@ export async function getTeams(): Promise<Array<Team> | null> {
   return teams;
 }
 export async function getGames(): Promise<Array<Game> | null> {
-  const result = await query('SELECT * FROM games');
+
+  const queryText = `
+  SELECT g.id, 
+       g.date, 
+       home_team.id AS home_id, home_team.name AS home_name, home_team.slug AS home_slug, home_team.description AS home_description,
+       away_team.id AS away_id, away_team.name AS away_name, away_team.slug AS away_slug, away_team.description AS away_description,
+       g.home_score, 
+       g.away_score, 
+       g.created, 
+       g.updated
+FROM games g
+JOIN teams home_team ON g.home = home_team.id
+JOIN teams away_team ON g.away = away_team.id
+ORDER BY g.date;
+`;
+
+  const result = await query(queryText);
 
   if (!result) {
     return null;

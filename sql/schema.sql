@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS public.games (
   away INTEGER NOT NULL,
   home_score INTEGER NOT NULL CHECK (home_score >= 0),
   away_score INTEGER NOT NULL CHECK (away_score >= 0),
+  created timestamp with time zone not null default current_timestamp,
+  updated timestamp with time zone not null default current_timestamp,
 
   CONSTRAINT fk_teams_home FOREIGN KEY (home) REFERENCES teams (id),
   CONSTRAINT fk_teams_away FOREIGN KEY (away) REFERENCES teams (id)

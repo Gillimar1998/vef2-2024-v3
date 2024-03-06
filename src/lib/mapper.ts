@@ -1,4 +1,4 @@
-import { Team, Game } from "./teams";
+import { Team, Game, GameQuery } from "./teams";
 
 export function teamMapper(
     potentialTeam: unknown,
@@ -35,36 +35,45 @@ export function teamMapper(
 
 
   export function gameMapper(
-    potentialGame: unknown,
+    potentialGame: GameQuery,
   ): Game | null {
-    const game = potentialGame as Partial<Game> | null;
-  
-    if (!game || !game.date || !game.home || !game.away || !game.home_score || !game.away_score) {
+    if (!potentialGame || !potentialGame.id || !potentialGame.date || !potentialGame.home_id || !potentialGame.away_id) {
       return null;
-    }
-  
-  
-    const mapped: Game = {
-      date: game.date,
-      home: game.home,
-      away: game.away,
-      home_score: game.home_score,
-      away_score: game.away_score
-    };
-  
-    return mapped;
+  }
+
+  const mapped: Game = {
+      id: potentialGame.id,
+      date: potentialGame.date,
+      home: {
+          id: potentialGame.home_id,
+          name: potentialGame.home_name,
+          slug: potentialGame.home_slug,
+          description: potentialGame.home_description,
+      },
+      away: {
+          id: potentialGame.away_id,
+          name: potentialGame.away_name,
+          slug: potentialGame.away_slug,
+          description: potentialGame.away_description,
+      },
+      home_score: potentialGame.home_score,
+      away_score: potentialGame.away_score,
+      created: potentialGame.created,
+      updated: potentialGame.updated,
+  };
+
+  return mapped;
   }
   
   export function gamesMapper(
-    potentialGames: unknown,
+    potentialGames: GameQuery[],
   ): Array<Game> {
-    const games = potentialGames as Array<unknown> | null;
   
-    if (!games) {
+    if (!potentialGames) {
       return [];
     }
   
-    const mapped = games.map((dept) => gameMapper(dept));
+    const mapped = potentialGames.map((dept) => gameMapper(dept));
   
     return mapped.filter((i): i is Game => Boolean(i));
   }
