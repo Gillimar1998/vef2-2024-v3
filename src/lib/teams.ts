@@ -33,3 +33,7 @@ export type GameQuery = {
     updated: Date;
 };
 
+export type NotSameTeamOptions = {
+    field1: string;
+    field2: string;
+  }

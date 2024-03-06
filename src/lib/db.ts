@@ -56,11 +56,11 @@ export async function conditionalUpdate(
   table: 'teams' | 'games',
   id: number,
   fields: Array<string | null>,
-  values: Array<string | number | null>,
+  values: Array<string | number | Date| null>,
 ) {
   const filteredFields = fields.filter((i) => typeof i === 'string');
   const filteredValues = values.filter(
-    (i): i is string | number => typeof i === 'string' || typeof i === 'number',
+    (i): i is string | number | Date => typeof i === 'string' || typeof i === 'number' || i instanceof Date
   );
 
   if (filteredFields.length === 0) {
@@ -71,7 +71,6 @@ export async function conditionalUpdate(
     throw new Error('fields and values must be of equal length');
   }
 
-  // id is field = 1
   const updates = filteredFields.map((field, i) => `${field} = $${i + 2}`);
 
   const q = `
@@ -82,8 +81,8 @@ export async function conditionalUpdate(
     RETURNING *
     `;
 
-  const queryValues: Array<string | number> = (
-    [id] as Array<string | number>
+  const queryValues: Array<string | number | Date> = (
+    [id] as Array<string | number | Date>
   ).concat(filteredValues);
   const result = await query(q, queryValues);
 

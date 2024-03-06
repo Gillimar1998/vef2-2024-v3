@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import { CustomValidator, ValidationChain, body, validationResult } from 'express-validator';
 import slugify from 'slugify';
 import xss from 'xss';
 
 import { checkTeamExists, getTeams, getTeamsBySlug } from './db.js';
+import { NotSameTeamOptions } from './teams.js';
 
 /**
  * Checks to see if there are validation errors or returns next middlware if not.
@@ -118,88 +119,6 @@ export const teamDoesNotExistValidator = body('name').custom(
     return Promise.resolve();
   },
 );
-export function skraValidation() {
-  console.log('createdgame validation')
-  return [
-    body('date')
-    .isISO8601().withMessage('Ógild dagsetning')
-    .custom((value) => {
-        console.log('date checking')
-        const input = new Date(value);
-        const now = new Date;
-        
-        if(input > now){
-            throw new Error('Ekki hægt að skrá leiki fram í tíman')
-        }else{
-            console.log('date checked')
-            return true;
-        }
-    })
-    .custom((value) =>{
-      const input = new Date(value);
-        const now = new Date;
-        const twoMonths = new Date(now);
-        twoMonths.setMonth(now.getMonth()-2);
-        
-        if(input< twoMonths){
-          throw new Error('Ekki hægt að skrá leiki eldri en tveggja mánaða')
-        }else{
-          console.log('date checked2')
-          return true;
-        }
-    }),
-    body('home_id')
-      .trim()
-      .custom(async (value) => {
-        console.log('hid checking')
-        const id = parseInt(value, 10); // Parse the ID as an integer
-        if (isNaN(id)) {
-          throw new Error('ID þarf að vera tala liðs');
-        }
-        const teamExists = await checkTeamExists(value);
-        if (!teamExists) {
-          throw new Error('Heimalið má ekki vanta');
-        }
-        return true;
-      }),
-    body('away_id')
-    .trim()
-    .custom(async (value) => {
-      console.log('aid checking')
-      const id = parseInt(value, 10); // Parse the ID as an integer
-      if (isNaN(id)) {
-        throw new Error('ID þarf að vera tala liðs');
-      }
-      const teamExists = await checkTeamExists(value);
-        if (!teamExists) {
-          throw new Error('Útilið má ekki vanta');
-        }
-        return true;
-    })
-    .bail()
-    .custom((value,{req}) =>{
-      console.log('hid og aid checking')
-        if (value === req.body.home_id){
-            throw new Error('Heima og úti lið mega ekki vera það sama');
-        }else{
-            return true
-        }
-      }),
-    body('home_score')
-      .notEmpty()
-      .withMessage('Heimalið vantar stig')
-      .bail()
-      .isInt({ min: 0, max: 99 })
-      .withMessage('Stig heimaliðs verða að vera heiltala frá 0 til 99'),
-      
-    body('away_score')
-    .notEmpty()
-      .withMessage('Útilið vantar stig')
-      .bail()
-      .isInt({min: 0, max: 99})
-      .withMessage('Stig útiliðs verða að vera heiltala frá 0 til 99'),
-  ];
-}
 
 export const dateValidator = ({
   field = '',
@@ -296,3 +215,11 @@ export const idValidator = ({
   return val;
 }
 
+export function notSameTeamValidator(field1: string, field2: string, message: string): ValidationChain {
+  return body(field1).custom((value, { req }) => {
+      if (value === req.body[field2]) {
+          throw new Error(message);
+      }
+      return true; // Validation passed
+  });
+}
