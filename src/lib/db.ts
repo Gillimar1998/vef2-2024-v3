@@ -1,6 +1,6 @@
 import pg from 'pg';
-import { Team, Game } from './teams.js';
-import { gamesMapper, teamMapper, teamsMapper } from './mapper.js';
+import { Team, Game, GameQuery } from './teams.js';
+import { gameMapper, gamesMapper, teamMapper, teamsMapper } from './mapper.js';
 
 let savedPool: pg.Pool | undefined;
 
@@ -137,6 +137,37 @@ ORDER BY g.date;
 
   return games;
 }
+export async function getGameByID(
+  id: string,
+): Promise<Game | null> {
+
+  const queryText = `
+  SELECT g.id, 
+       g.date, 
+       home_team.id AS home_id, home_team.name AS home_name, home_team.slug AS home_slug, home_team.description AS home_description,
+       away_team.id AS away_id, away_team.name AS away_name, away_team.slug AS away_slug, away_team.description AS away_description,
+       g.home_score, 
+       g.away_score, 
+       g.created, 
+       g.updated
+FROM games g
+JOIN teams home_team ON g.home = home_team.id
+JOIN teams away_team ON g.away = away_team.id
+WHERE g.id = $1
+ORDER BY g.date;
+`;
+  const result = await query(queryText, [
+    id,
+  ]);
+
+  if (!result) {
+    return null;
+  }
+
+  const game = gameMapper(result.rows[0]);
+
+  return game;
+}
 
 export async function getTeamsBySlug(
   slug: string,
@@ -152,6 +183,27 @@ export async function getTeamsBySlug(
   const team = teamMapper(result.rows[0]);
 
   return team;
+}
+
+export async function insertGame(
+  Game: Omit<GameQuery, 'id' | 'home_name' | 'home_slug' | 'home_description' | 'away_name' | 'away_slug' | 'away_description' | 'created' | 'updated'>,
+  silent = false,
+): Promise<Game | null> {
+  const { date, home_id, away_id, home_score, away_score,} = Game;
+  console.log({ date, home_id, away_id, home_score, away_score });
+  const result = await query(
+    'INSERT INTO games (date, home, away, home_score, away_score) VALUES ($1, $2, $3, $4, $5) RETURNING id ',
+    [date, home_id, away_id, home_score, away_score],
+    silent,
+  );
+  if(result?.rows.length === 0){
+    throw new Error('Game insertion failed')
+  }
+
+  const gameID = result?.rows[0].id;
+  const game = await getGameByID(gameID.toString());
+
+  return game;
 }
 
 export async function insertTeam(
@@ -178,4 +230,15 @@ export async function deleteTeamBySlug(slug: string): Promise<boolean> {
   }
 
   return result.rowCount === 1;
+}
+
+export async function checkTeamExists(id:number): Promise<boolean> {
+  const queryText = 'SELECT id FROM teams WHERE id = $1';
+  const result = await query(queryText, [id]);
+
+  if(!result){
+    return false;
+  }
+
+  return result.rows.length > 0;
 }

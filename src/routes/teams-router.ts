@@ -7,8 +7,12 @@ import { teamMapper } from '../lib/mapper.js';
 
 export const teamsRouter = express.Router();
 
-export async function GetTeams(req: Request, res: Response) {
+export async function GetTeams(req: Request, res: Response, next:NextFunction) {
     const teams = await getTeams()
+
+    if(!teams){
+      return next();
+    }
 
     return res.json(teams);
 }

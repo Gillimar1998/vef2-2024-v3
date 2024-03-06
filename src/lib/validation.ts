@@ -3,7 +3,7 @@ import { body, validationResult } from 'express-validator';
 import slugify from 'slugify';
 import xss from 'xss';
 
-import { getTeamsBySlug } from './db.js';
+import { checkTeamExists, getTeams, getTeamsBySlug } from './db.js';
 
 /**
  * Checks to see if there are validation errors or returns next middlware if not.
@@ -33,6 +33,8 @@ export function validationCheck(
 
     return res.status(status).json({ errors });
   }
+
+  console.log('ValidationCheck completed')
 
   return next();
 }
@@ -116,5 +118,181 @@ export const teamDoesNotExistValidator = body('name').custom(
     return Promise.resolve();
   },
 );
+export function skraValidation() {
+  console.log('createdgame validation')
+  return [
+    body('date')
+    .isISO8601().withMessage('Ógild dagsetning')
+    .custom((value) => {
+        console.log('date checking')
+        const input = new Date(value);
+        const now = new Date;
+        
+        if(input > now){
+            throw new Error('Ekki hægt að skrá leiki fram í tíman')
+        }else{
+            console.log('date checked')
+            return true;
+        }
+    })
+    .custom((value) =>{
+      const input = new Date(value);
+        const now = new Date;
+        const twoMonths = new Date(now);
+        twoMonths.setMonth(now.getMonth()-2);
+        
+        if(input< twoMonths){
+          throw new Error('Ekki hægt að skrá leiki eldri en tveggja mánaða')
+        }else{
+          console.log('date checked2')
+          return true;
+        }
+    }),
+    body('home_id')
+      .trim()
+      .custom(async (value) => {
+        console.log('hid checking')
+        const id = parseInt(value, 10); // Parse the ID as an integer
+        if (isNaN(id)) {
+          throw new Error('ID þarf að vera tala liðs');
+        }
+        const teamExists = await checkTeamExists(value);
+        if (!teamExists) {
+          throw new Error('Heimalið má ekki vanta');
+        }
+        return true;
+      }),
+    body('away_id')
+    .trim()
+    .custom(async (value) => {
+      console.log('aid checking')
+      const id = parseInt(value, 10); // Parse the ID as an integer
+      if (isNaN(id)) {
+        throw new Error('ID þarf að vera tala liðs');
+      }
+      const teamExists = await checkTeamExists(value);
+        if (!teamExists) {
+          throw new Error('Útilið má ekki vanta');
+        }
+        return true;
+    })
+    .bail()
+    .custom((value,{req}) =>{
+      console.log('hid og aid checking')
+        if (value === req.body.home_id){
+            throw new Error('Heima og úti lið mega ekki vera það sama');
+        }else{
+            return true
+        }
+      }),
+    body('home_score')
+      .notEmpty()
+      .withMessage('Heimalið vantar stig')
+      .bail()
+      .isInt({ min: 0, max: 99 })
+      .withMessage('Stig heimaliðs verða að vera heiltala frá 0 til 99'),
+      
+    body('away_score')
+    .notEmpty()
+      .withMessage('Útilið vantar stig')
+      .bail()
+      .isInt({min: 0, max: 99})
+      .withMessage('Stig útiliðs verða að vera heiltala frá 0 til 99'),
+  ];
+}
 
+export const dateValidator = ({
+  field = '',
+  valueRequired = true,
+  maxLength = 0,
+  optional = false,
+}= {}) => {
+  const val = body(field)
+  .isISO8601().withMessage('Ógild dagsetning')
+  .custom((value) => {
+      console.log('date checking')
+      const input = new Date(value);
+      const now = new Date;
+      
+      if(input > now){
+          throw new Error('Ekki hægt að skrá leiki fram í tíman')
+      }else{
+          console.log('date checked')
+          return true;
+      }
+  })
+  .custom((value) =>{
+    const input = new Date(value);
+      const now = new Date;
+      const twoMonths = new Date(now);
+      twoMonths.setMonth(now.getMonth()-2);
+      
+      if(input< twoMonths){
+        throw new Error('Ekki hægt að skrá leiki eldri en tveggja mánaða')
+      }else{
+        console.log('date checked2')
+        return true;
+      }
+
+    }
+  )
+  if (optional) {
+    console.log(`Field ${field} is optional.`);
+    return val.optional();
+  }
+  console.log('date for i gegn')
+  return val;
+}
+
+export const scoreValidator = ({
+  field = '',
+  valueRequired = true,
+  maxLength = 0,
+  optional = false,
+}= {}) => {
+  const val = body(field)
+  .notEmpty()
+  .withMessage('Lið mega ekki vanta stig!')
+  .bail()
+  .isInt({min: 0, max: 99})
+  .withMessage('Stig liðs verða að vera heiltala frá 0 til 99 ' + field)
+
+  if (optional) {
+    console.log(`Field ${field} is optional.`);
+    return val.optional();
+  }
+  return val;
+}
+
+export const idValidator = ({
+  field = '',
+  valueRequired = true,
+  maxLength = 0,
+  optional = false,
+}= {}) => {
+  console.log('lid check ' + field)
+  const val = body(field)
+  .notEmpty()
+  .withMessage('Lið má ekki vanta ' + field )
+  .bail()
+  .custom(async (value) => {
+    console.log('lid checking' + value)
+    const id = parseInt(value, 10);
+    console.log('id log fyrir value ' + id)
+    if (isNaN(id)) {
+      throw new Error('ID þarf að vera tala liðs');
+    }
+    const teamExists = await checkTeamExists(value);
+      if (!teamExists) {
+        throw new Error(field + ' er ekki skráð ID fyrir lið');
+      }
+      return true;
+  })
+  if (optional) {
+    console.log(`Field ${field} is optional.`);
+    return val.optional();
+  }
+  console.log('lid checked ' + field)
+  return val;
+}
 
