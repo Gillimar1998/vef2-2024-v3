@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import {Team } from '../lib/types.js';
+import { Team } from '../lib/types.js';
 import { conditionalUpdate, deleteTeamBySlug, getTeams, getTeamsBySlug, insertTeam } from '../lib/db.js';
 import slugify from 'slugify';
 import { atLeastOneBodyValueValidator, genericSanitizer, stringValidator, teamDoesNotExistValidator, validationCheck, xssSanitizer } from '../lib/validation.js';
