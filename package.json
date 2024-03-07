@@ -10,7 +10,7 @@
     "test:coverage": "jest --coverage"
   },
   "engines": {
-    "node": "20"
+    "node": "20.11.0"
   },
   "keywords": [],
   "author": "",
