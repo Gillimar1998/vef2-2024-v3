@@ -9,6 +9,9 @@
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
+  "engines": {
+    "node": "20"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
