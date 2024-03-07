@@ -5,7 +5,7 @@ import { apiRouter } from './routes/index.js';
 
 dotenv.config();
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
 
@@ -20,8 +20,10 @@ function errorHandler(err: Error){
 
 app.use(errorHandler);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`);
+  });
+}

@@ -1,3 +1,14 @@
+## POSTMAN
+
+-Getið séð hvernig gögn send inn postman eða body layoutið í v3.postman.json ekki samt importanlegt
+
+## Notkun Chat GPT 4.0
+
+-aðarlega test þar sem all var í ruglinu og þurfti að aðlaga að typescript
+- annars notað til útskýringar á hvernig hlutinir virka og hvað væri að gerast
+- og laga errors in general
+
+
 # Vefforritun 2, 2024, verkefni 3: boltadeildar™️ vefþjónustur
 
 [Kynning í fyrirlestri](https://youtu.be/laL6P4hCnfQ).
