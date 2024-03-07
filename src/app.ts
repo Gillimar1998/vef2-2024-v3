@@ -10,10 +10,11 @@ export const app = express();
 
 app.use(express.json());
 
-app.use('/', apiRouter);
+app.use(cors);
 app.use(router);
 
-app.use(cors);
+app.use('/', apiRouter);
+
 
 function errorHandler(err: Error){
 
