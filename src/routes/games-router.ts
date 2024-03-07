@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { GameQuery } from '../lib/types.js';
 import { conditionalUpdate, deleteGameByID,  getGameByID, getGames,  insertGame } from '../lib/db.js';
-
 import { atLeastOneBodyValueValidator, dateValidator, idValidator, notSameTeamValidator, scoreValidator, validationCheck } from '../lib/validation.js';
 
 

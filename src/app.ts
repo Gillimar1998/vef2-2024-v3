@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import { router } from './routes/api.js';
 import { apiRouter } from './routes/index.js';
 import { cors } from './lib/cors.js';
 
@@ -11,7 +10,6 @@ export const app = express();
 app.use(express.json());
 
 app.use(cors);
-app.use(router);
 
 app.use('/', apiRouter);
 
