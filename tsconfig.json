@@ -1,7 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es6",
+    "target": "ESNext",
     "strict": true,
     "esModuleInterop": true,
     "module": "ESNext",
