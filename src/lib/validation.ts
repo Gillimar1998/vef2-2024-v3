@@ -34,16 +34,13 @@ export function validationCheck(
     return res.status(status).json({ errors });
   }
 
-  console.log('ValidationCheck completed')
 
   return next();
 }
 
 export function atLeastOneBodyValueValidator(fields: Array<string>) {
-    console.log('running atleastonebody');
   return body().custom(async (value, { req }) => {
     const { body: reqBody } = req;
-    console.log('body', reqBody);
 
     let valid = false;
 
@@ -102,7 +99,6 @@ export const stringValidator = ({
     );
 
   if (optional) {
-    console.log(`Field ${field} is optional.`);
     return val.optional();
   }
   return val;
@@ -125,7 +121,6 @@ export const dateValidator = ({
   const val = body(field)
   .isISO8601().withMessage('Ógild dagsetning')
   .custom((value) => {
-      console.log('date checking')
       const input = new Date(value);
       const now = new Date;
       

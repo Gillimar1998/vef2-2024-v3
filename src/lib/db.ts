@@ -189,7 +189,6 @@ export async function insertGame(
   silent = false,
 ): Promise<Game | null> {
   const { date, home_id, away_id, home_score, away_score,} = Game;
-  console.log({ date, home_id, away_id, home_score, away_score });
   const result = await query(
     'INSERT INTO games (date, home, away, home_score, away_score) VALUES ($1, $2, $3, $4, $5) RETURNING id ',
     [date, home_id, away_id, home_score, away_score],

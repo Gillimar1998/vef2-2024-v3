@@ -97,7 +97,6 @@ export async function updateTeamHandler(req: Request, res:Response, next:NextFun
 
   const {name, description} = req.body;
 
-  console.log('name', name, 'desc', description);
 
   const fields = [
     typeof name === 'string' && name ? 'name' : null,

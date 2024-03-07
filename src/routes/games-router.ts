@@ -53,8 +53,6 @@ export const createGame=[
 export async function createGameHandler(req: Request, res:Response, next:NextFunction){
     const {date, home, away, home_score, away_score} = req.body;
 
-    console.log('home = ' + home + ' og away= ' + away)
-
     const gameToCreate: Omit<GameQuery,
      'id' | 
      'home_name' | 
@@ -71,7 +69,6 @@ export async function createGameHandler(req: Request, res:Response, next:NextFun
         home_score,
         away_score
     }
-    console.log('gametocreate ' + gameToCreate)
     const createdGame = await insertGame(gameToCreate, false)
 
     if(!createdGame){
